@@ -38,34 +38,27 @@ def upload(request):
         resumeFileData=parser.from_file(resumeFile)
         fileContent = resumeFileData['content']
         fileContent=fileContent.strip()
-        fileContent=fileContent.split()
-        print(type(fileContent))
-        print(len(fileContent))
-        n=len(fileContent)
-        #ResumeData = []
-        #ResumeData.append(fileContent)
-        #print(type(fileContent) )
+        newResumeTxtFile.write(fileContent)
+        lst=re.findall('\S+@\S+',fileContent)
+        print(lst)
         def email_filtering(fileContent):
-            regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-            for i in range(0,n):
-                if(re.fullmatch(regex,fileContent[i])):
-                    return True
-                else:
-                    return False
-        def linkdn_filtering(fileContent):
-            for i in range(0,n):
-                print(fileContent[i])
-                #p = re.compile('(http(s?)://|[a-zA-Z0-9\-]+\.|[linkedin])[linkedin/~\-]+\.[a-zA-Z0-9/~\-_,&=\?\.;]+[^\.,\s<]')
-                if(fileContent[i].startswith("linkedin.com")):
-                    return True
-                else:
-                    return False
-                   
+            if(re.findall('\S+@\S+',fileContent)):
+                return True
+            else:
+                return False
         print(email_filtering(fileContent))
-        print(linkdn_filtering(fileContent))
-        #newResumeTxtFile.write(fileContent)
-        
-        #print(ResumeData)
+        def linkld_filtering(fileContent):
+            if(fileContent.find('www.linkedin.com') != -1):
+                print ("Contains given substring ")
+            else:
+                print ("Doesn't contains given substring")
+        linkld_filtering(fileContent)
+        skillDataset = pd.read_csv(r"D:\Users\sahil\Desktop\Project\SRS\companies_data.csv")
+        skills = list(skillDataset['comp_skills'])
+        cleanedskillList = [x for x in skills if str(x) != 'nan']
+        cleanedskillList = [i.split()[0] for i in skills]
+		
+
         return render(request, 'upload.html', {
             'uploaded_file_url': uploaded_file_url
         })
